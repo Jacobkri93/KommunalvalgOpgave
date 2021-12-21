@@ -31,9 +31,12 @@
     const SERVER_URL = sessionStorage.getItem("SERVER_URL");
 
 
+    //Deletes the selected candidate from the ID input in the form -> is selected via the form with the value of the "person-id" (line 11)
     document.getElementById("btn-delete").onclick = (evt)=> { console.log(document.getElementById("person-id").value)
         evt.preventDefault()  // preventDefault() sørger for at siden ikke opdateres
         evt.stopPropagation() // stopPropagation() stopper event bubbling
+
+        //Options used for the delete in CRUD and inserted into the fetch call on line 45.
         const options = {     //options objektet bruges til fetch hvis man gerne vil lave noget andet en getmapping (PUT,POST,DELETE)
             method: "DELETE",
             headers: {'Content-Type': 'application/json'
@@ -43,7 +46,7 @@
             .then(handleHttpErrorsAsync)
             .then(res=>res.json())
             .then(p=> document.getElementById("status").innerText =JSON.stringify(p))
-            .catch(e=>document.getElementById("error1").innerText="ups"+e.message)
+            .catch(e=>document.getElementById("error1").innerText="Somthing went wrong!"+e.message)
 
     }
 </script>

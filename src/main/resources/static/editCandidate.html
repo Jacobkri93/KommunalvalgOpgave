@@ -13,6 +13,7 @@
 </div>
 <p id="error1" style="color: red"></p>
 
+<!--Form for editing a candidate-->
 <form>
     <p>ID: <span id="id-for-candidate"></span> </p>
     <div><input id="f-name" placeholder="firstName" /></div>
@@ -28,14 +29,16 @@
 <p><a href="/">Back</a></p>
 
 <script>
+
     sessionStorage.setItem("PARTIES_URL","api/party");
     const PARTIES_URL = sessionStorage.getItem("PARTIES_URL");
 
+    //fetching the parties and "adds" them to the selection on line 24
     fetch(PARTIES_URL)
         .then(handleHttpErrorsAsync)
         .then(list=> {
             list.forEach(partyData =>{
-                const option = document.createElement("option") //option element is used in the selection tag on line 22
+                const option = document.createElement("option") //Here the options elements is created for the select tag so the user can choose which party to change to or leave as it is.
                 option.value = partyData.id; // We get the ID of the party
                 option.text = partyData.party; // We get the party name from
                 document.getElementById("party-select").appendChild(option)
@@ -45,6 +48,7 @@
 
 
 
+    //Async & await to handle errors in fetches
     async function handleHttpErrorsAsync(res) {
         if (!res.ok) {
             const errorResponse = await res.json();
@@ -55,8 +59,10 @@
         return res.json()
     }
 
+    //URL to get the candidate id from the Controller (Candidate controller)
     const SERVER_URL = sessionStorage.getItem("SERVER_URL");
 
+    //inputs the info on the selected candidate, found from the ID in the form on line 18
     document.getElementById("btn-find").onclick = ()=>{
         fetch(SERVER_URL+"/"+document.getElementById("candidate-id").value)
             .then(handleHttpErrorsAsync)
@@ -71,7 +77,7 @@
 
 
 
-
+    //Saves the edited data on the candidate - if leaves if unchanged if nothing happends
     document.getElementById("btn-save").onclick = (evt)=>{
         evt.preventDefault()
         const newCandidate = {}

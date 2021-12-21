@@ -28,15 +28,9 @@
 
     const SERVER_URL = sessionStorage.getItem("SERVER_URL");
 
+    //Saving the added candidate from the values
     document.getElementById("btn-save").onclick = (evt)=>{
         evt.preventDefault()
-        // const newKandidat = {}
-        //
-        // newKandidat.firstName = document.getElementById("f-name").value
-        // newKandidat.lastName = document.getElementById("l-name").value
-        // newKandidat.party = document.getElementById("k-party").value
-
-
 
         const firstName = document.getElementById("f-name").value
         const lastName = document.getElementById("l-name").value
@@ -45,7 +39,7 @@
             firstName,lastName,party:{id:party}
         }
 
-
+        //Options used for the fetch on line 51
         const options = {
             method: "POST",
             headers : {

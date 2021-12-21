@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 
 @RestController
+//used for the session storages in the frontend and added as URLS to fetch from
 @RequestMapping("api/candidate")
 public class CandidateController {
 

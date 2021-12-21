@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
+//used for the session storages in the frontend and added as URLS to fetch from
 @RequestMapping("api/party")
 public class PartyController {
 
@@ -24,7 +25,7 @@ public class PartyController {
 
 
 
-    //Not functioning yet
+    //Not functioning yet :-(
     @GetMapping("party/{id}")
     Party FindByPartyId(@PathVariable ("id") int id){
         return partyRepository.findById(id).orElseThrow(() -> new NotFoundException("Party not found"));
