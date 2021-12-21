@@ -11,8 +11,11 @@ https://github.com/Jacobkri93/KommunalvalgOpgave
 
 1.
 - Opret din Application Properties fil:
+
 Templete
+
 #MySQL properties
+
 spring.jpa.hibernate.ddl-auto=update
 
 spring.datasource.url=jdbc:mysql://localhost:3306/kommunevalg
