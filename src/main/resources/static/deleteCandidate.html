@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="styles/style.css" rel="stylesheet"/>
+    <title>Delete</title>
+</head>
+<body>
+
+<div>
+    <input id="person-id" placeholder="Add ID for person to delete">
+    <button type="button" id="btn-delete">Delete Person</button>
+</div>
+
+<p id="status"></p>
+<p><a href="/">Back</a></p>
+
+<script>
+
+    async function handleHttpErrorsAsync(res) {
+        if (!res.ok) {
+            const errorResponse = await res.json();
+            const error = new Error(errorResponse.message)
+            error.apiError = errorResponse
+            throw error
+        }
+        return res.json()
+    }
+
+
+    const SERVER_URL = sessionStorage.getItem("SERVER_URL");
+
+
+    document.getElementById("btn-delete").onclick = (evt)=> { console.log(document.getElementById("person-id").value)
+        evt.preventDefault()  // preventDefault() sørger for at siden ikke opdateres
+        evt.stopPropagation() // stopPropagation() stopper event bubbling
+        const options = {     //options objektet bruges til fetch hvis man gerne vil lave noget andet en getmapping (PUT,POST,DELETE)
+            method: "DELETE",
+            headers: {'Content-Type': 'application/json'
+            }
+        }
+        fetch(SERVER_URL+"/"+document.getElementById("person-id").value,options)
+            .then(handleHttpErrorsAsync)
+            .then(res=>res.json())
+            .then(p=> document.getElementById("status").innerText =JSON.stringify(p))
+            .catch(e=>document.getElementById("error1").innerText="ups"+e.message)
+
+    }
+</script>
+
+
+</body>
+</html>

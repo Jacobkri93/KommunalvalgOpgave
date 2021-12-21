@@ -1,0 +1,29 @@
+tr:hover {
+    background-color: slategray;
+}
+#pages-select{
+    background-color: #9f6060;
+    border-radius: 12px;
+}
+
+a:hover {
+    background-color: lightblue;
+}
+a {
+    padding: 5px;
+}
+
+body{
+    background-color: lightgoldenrodyellow;
+}
+
+#party-overview{
+    display: inline-grid;
+}
+
+#hilleroedpicture {
+    border-radius: 6px;
+    margin: 25px;
+    display: flex;
+    align-content: flex-start;
+}

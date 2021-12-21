@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSS only -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="styles/style.css" rel="stylesheet"/>
+    <title>Kommunevalg ( ͡° ͜ʖ ͡°) </title>
+</head>
+
+<body class="container">
+
+
+<h1>DISTRICT ELECTION HILLERØD 2021</h1>
+
+<div id="hilleroedpicture">
+<img src="../images/hilleroedkommune.png"  alt="picture" width="400"><br>
+</div>
+
+<div id="pages-select">
+<p><a href="addCandidate.html">Add Candidate</a></p>
+<p><a href="editCandidate.html">Edit Candidate</a></p>
+<p><a href="deleteCandidate.html">Delete Candidate</a></p>
+<p><a href="electionResults.html">Election results 2021</a></p>
+</div>
+
+<div>
+    <h3>Party overview:</h3>
+    <table>
+    <thead>
+
+    </thead>
+        <tbody id="party-overview">
+    <tr><td>A-Socialdemokratiet</td></tr>
+    <tr><td>B-Radikale Venstre</td></tr>
+    <tr><td>C-Det Konservative Folkeparti</td></tr>
+    <tr><td>D-Nye Borgerlige</td></tr>
+    <tr><td>F-SF - Socialistisk Folkeparti</td></tr>
+    <tr><td>I-Liberal Alliance</td></tr>
+    <tr><td>K-Kristendemokraterne</td></tr>
+    <tr><td>O-Dansk Folkeparti</td></tr>
+    <tr><td>V-Venstre, Danmarks Liberale Parti</td></tr>
+    <tr><td>Æ-Frihedslisten</td></tr>
+    <tr><td>Ø-Enhedslisten - De Rød-Grønne</td></tr>
+        </tbody></table>
+</div>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>//Id//</th>
+        <th>//Candidate's First Name//</th>
+        <th>//Candidate's Last Name//</th>
+        <th>//Party//</th>
+    </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+</table>
+
+<label for="party-select">Filter on Party:</label>
+<select name="party" id="party-select" >
+<!--    Added no filter for default values on the tables-->
+    <option value="0">No filter</option></select>
+<button id="btn-filter-party" class="btn btn-primary" onclick="partyFilter()">Filter on Party 💯</button>
+
+
+<script>
+    //This sessionStorage makes sure we can grap the Server URL on any page - connects to the CandidateController
+    sessionStorage.setItem("SERVER_URL", "api/candidate");
+
+    SERVER_URL = sessionStorage.getItem("SERVER_URL");
+
+    //This sessionStorage makes sure we can grap the Server URL on any page - connects to the PartyController
+    sessionStorage.setItem("PARTIES_URL", "api/party");
+    const PARTIES_URL = sessionStorage.getItem("PARTIES_URL");
+
+    //handleHttpErrors with Async and await - displays the error messages if there is any
+    async function handleHttpErrorsAsync(res) {
+        if (!res.ok) {
+            const errorResponse = await res.json();
+            const error = new Error(errorResponse.message)
+            error.apiError = errorResponse
+            throw error
+        }
+        return res.json()
+    }
+
+
+    //Adding selection (and the options) to the select option for filter botton
+    function showFilterSelection() {
+        fetch(PARTIES_URL)
+            .then(handleHttpErrorsAsync)
+            .then(list => {
+                list.forEach(partyData => {
+                    const option = document.createElement("option") //option element is used in the selection tag on line 22
+                    option.value = partyData.id; // We get the ID of the party
+                    option.text = partyData.party; // We get the party name as text
+                    document.getElementById("party-select").appendChild(option)
+                })
+            })
+            .catch(e => document.getElementById("error1").innerText = "Something went wrong ಠ╭╮ಠ " + e.message)
+    }
+    showFilterSelection()
+
+
+    //Filter:
+    //Handler to make sure when btn-filter-party is pressed, ONLY the partyFilter function will be called
+    function partyFilter() {
+        let select = document.getElementById("party-select");
+        let selectedValue = 0;
+        if (select !=null && select != undefined && select.options[select.selectedIndex]) {
+           selectedValue = select.options[select.selectedIndex].value;
+        }
+        getTableData(selectedValue)
+    }
+
+
+    //Filter on method with selectedValue which is from the partyfilter function
+    function getTableData(selectedValue) {
+
+        fetch(SERVER_URL+"/getAll/"+ selectedValue)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                console.log(data);
+                localStorage.setItem("list", JSON.stringify(data))
+                makeRows(data)
+
+            })
+    }
+    getTableData(0);
+
+    console.log("")
+
+    function makeRows(data) {
+        const candidates = data
+        const rows = candidates.map(c => `
+         <tr>
+           <td>${(c.id)}</td>
+           <td>${(c.firstName)}</td>
+           <td>${(c.lastName)}</td>
+           <td>${(c.party.party)}</td>
+         </tr>
+        `)
+        document.getElementById("tbody").innerHTML = rows.join("")
+    }
+
+    //Used to prevent bobling - not used after implementation of the filter
+    // function setUpHandler() {
+    //     document.getElementById("btn-filter-party").onclick = partyFilter()
+    // }
+    // setUpHandler();
+
+    //Utility function to escape "untrusted inputs" // Only used for strings which needs to be escaped ex."</br>" etc.>
+    function encode(str) {
+        str = "" + str
+        str = str.replace(/&/g, "&amp;");
+        str = str.replace(/>/g, "&gt;");
+        str = str.replace(/</g, "&lt;");
+        str = str.replace(/"/g, "&quot;");
+        str = str.replace(/'/g, "&#039;");
+        return str;
+    }
+
+</script>
+</body>
+</html>
